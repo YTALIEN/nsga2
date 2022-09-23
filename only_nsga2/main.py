@@ -13,17 +13,19 @@ if not os.path.isdir(file_path):
 
 
 def main(problem=config.chosen_problem, pop_size=config.pop_size, mr=config.max_run):
-    final_pop = []
+    final_res = []
     prob = config.problems[problem]()
     # randomly choose a run's result to show
     rand = random.randint(0, mr - 1)
 
     for i in range(mr):
-        time1 = time.time()
+        # time1 = time.time()
         res = evolution.evolution_with_nsga2(problem, pop_size)
-        time2 = time.time()
-        print("\n{}:total_time={:.2f}s".format(i + 1, time2 - time1))
-        final_pop.append(res)
+        res_pf=prob.get_objectivespace(res,pop_size)
+        # time2 = time.time()
+        # print("\n{}:total_time={:.2f}s".format(i + 1, time2 - time1))
+        res_pf=res_pf.reshape(-1)
+        final_res.append(res_pf)
 
         # show as a picture
         if i == rand:
@@ -38,8 +40,9 @@ def main(problem=config.chosen_problem, pop_size=config.pop_size, mr=config.max_
             plt.show()
 
         config.run += 1
-    np.savetxt(f'{file_path}/{problem}_result.csv', final_pop, delimiter="\t")
+    np.savetxt(f'{file_path}/{problem}_result.csv', final_res, delimiter="\t")
 
 
 if __name__ == "__main__":
-    main()
+    for chosen_problem in config.test_problem:
+        main(chosen_problem)
